@@ -57,9 +57,10 @@ public class MovesGenerator {
     private List<Move> castle(State state, int rank, int file) {
         List<Move> moves = new ArrayList<>();
         Piece[][] board = state.getBoard();
-        if (!state.getKingMoved()[state.getTurn().ordinal()]) {
+        Piece movePiece = board[rank][file];
+        if (!state.getKingMoved()[movePiece.getColor().ordinal()]) {
             // king side castle
-            if (!state.getKingRookMoved()[state.getTurn().ordinal()]) {
+            if (!state.getKingRookMoved()[movePiece.getColor().ordinal()]) {
                 int i;
                 for (i = 1; i < 3; i++) {
                     if (board[rank][file + i] != null) {
@@ -72,7 +73,7 @@ public class MovesGenerator {
                 }
             }
             // queen side castle
-            if (!state.getQueenRookMoved()[state.getTurn().ordinal()]) {
+            if (!state.getQueenRookMoved()[movePiece.getColor().ordinal()]) {
                 int i;
                 for (i = 1; i < 4; i++) {
                     if (board[rank][file - i] != null) {
@@ -212,7 +213,7 @@ public class MovesGenerator {
         Piece movePiece = board[rank][file];
         int i = movePiece.getColor().equals(Color.WHITE) ? -1 : 1;
         for (int j = -1; j <= 1; j+=2) {
-            if (!isWithinBounds(state, rank + i, file)) {
+            if (!isWithinBounds(state, rank + i, file + j)) {
                 continue;
             }
             Move move = parser.parse(state, rank, file, rank + i, file + j);
@@ -229,9 +230,9 @@ public class MovesGenerator {
 
     private List<Move> promote(State state, List<Move> moves) {
         List<Move> promotedMoves = new ArrayList<>();
-        int lastRank = state.getTurn().equals(Color.WHITE) ? 0 : 7;
         PieceType[] promotions = new PieceType[]{PieceType.ROOK, PieceType.KNIGHT, PieceType.BISHOP, PieceType.QUEEN};
         for (Move move : moves) {
+            int lastRank = move.getMovePiece().getColor().equals(Color.WHITE) ? 0 : 7;
             if (move.getToRank() == lastRank) {
                 for (PieceType promotion : promotions) {
                     promotedMoves.add(parser.parse(state, move.getFromRank(), move.getFromFile(), move.getToRank(), move.getToFile(), promotion.name()));
@@ -244,7 +245,7 @@ public class MovesGenerator {
     }
 
     private boolean canTakePiece(Piece movePiece, Piece takePiece) {
-        return !takePiece.getColor().equals(movePiece.getColor()) && !takePiece.getType().equals(PieceType.KING);
+        return !takePiece.getColor().equals(movePiece.getColor());
     }
 
     private boolean isWithinBounds(State state, int rank, int file) {

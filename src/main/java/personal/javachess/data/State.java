@@ -18,6 +18,27 @@ public class State {
     private int enpassantRank = -1;
     private int enpassantFile = -1;
 
+    public State() {
+    }
+
+    public State(State other) {
+        this.turn = other.turn;
+        this.gameEndState = other.gameEndState;
+        this.enpassantRank = other.enpassantRank;
+        this.enpassantFile = other.enpassantFile;
+        for (int i = 0; i < Color.values().length; i++) {
+            this.kingMoved[i] = other.kingMoved[i];
+            this.kingRookMoved[i] = other.kingRookMoved[i];
+            this.queenRookMoved[i] = other.queenRookMoved[i];
+        }
+        this.board = new Piece[other.board.length][other.board[0].length];
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                this.board[i][j] = other.board[i][j];
+            }
+        }
+    }
+
     public void setTurn(Color turn) {
         this.turn = turn;
     }

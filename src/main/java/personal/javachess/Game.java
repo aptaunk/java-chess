@@ -61,8 +61,15 @@ public class Game {
 
             // update the state
             updater.updateState(state, move);
+            updater.end(state, move);
+            updater.nextTurn(state);
         }
 
+        // game over
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+        System.out.println(printer.displayBoard(state));
+        System.out.println("Game Over. "+state.getGameEndState().getMessage());
     }
 
 }

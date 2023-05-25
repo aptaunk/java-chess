@@ -13,6 +13,8 @@ import personal.javachess.enums.Piece;
 public class MoveValidator {
     
     @Autowired private MovesGenerator generator;
+    @Autowired private CheckDetector detector;
+    @Autowired private StateUpdater updater;
 
     public boolean isValidMove(State state, Move move) {
         Piece[][] board = state.getBoard();
@@ -45,8 +47,8 @@ public class MoveValidator {
         }
 
         // make sure king is not in check as a result of this move
-
-        return true;
+        State newState = updater.newState(state, move);
+        return !detector.isInCheck(newState, state.getTurn());
     }
 
     private boolean isWithinBounds(State state, int rank, int file) {

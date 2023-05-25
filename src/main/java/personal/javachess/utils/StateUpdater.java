@@ -1,18 +1,24 @@
 package personal.javachess.utils;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import personal.javachess.data.Move;
 import personal.javachess.data.State;
 import personal.javachess.enums.Color;
+import personal.javachess.enums.GameEndState;
 import personal.javachess.enums.Piece;
 import personal.javachess.enums.PieceType;
 
 @Component
 public class StateUpdater {
+
+    @Autowired private MovesGenerator generator;
+    @Autowired private CheckDetector detector;
     
     public void updateState(State state, Move move) {
-
         // remove taken piece
         take(state, move);
 
@@ -27,11 +33,6 @@ public class StateUpdater {
 
         // set enpassant
         enpassant(state, move);
-
-        // check if game is over
-
-        // change turn
-        nextTurn(state);
     }
 
     private void take(State state, Move move) {
@@ -90,7 +91,35 @@ public class StateUpdater {
         }
     }
 
-    private void nextTurn(State state) {
+    public void end(State state, Move move) {
+        // if the opponent has a move and it doesn't put the opponent in check the game is not over
+        Piece[][] board = state.getBoard();
+        Color opponent = move.getPlayer().equals(Color.WHITE) ? Color.BLACK : Color.WHITE;
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                Piece piece = board[i][j];
+                if (piece != null && piece.getColor().equals(opponent)) {
+                    List<Move> moves = generator.generateMoves(state, i, j);
+                    for (Move oppMove : moves) {
+                        State newState = newState(state, oppMove);
+                        if (!detector.isInCheck(newState, opponent)) {
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+        Color winner = detector.isInCheck(state, opponent) ? state.getTurn() : null;
+        state.setGameEndState(GameEndState.state(winner));
+    }
+
+    public State newState(State state, Move move) {
+        State newState = new State(state);
+        updateState(newState, move);
+        return newState;
+    }
+
+    public void nextTurn(State state) {
         switch(state.getTurn()) {
             case WHITE:
                 state.setTurn(Color.BLACK);
