@@ -16,7 +16,6 @@ import personal.javachess.enums.PieceType;
 public class StateUpdater {
 
     @Autowired private MovesGenerator generator;
-    @Autowired private CheckDetector detector;
     
     public void updateState(State state, Move move) {
         // remove taken piece
@@ -102,14 +101,14 @@ public class StateUpdater {
                     List<Move> moves = generator.generateMoves(state, i, j);
                     for (Move oppMove : moves) {
                         State newState = newState(state, oppMove);
-                        if (!detector.isInCheck(newState, opponent)) {
+                        if (!generator.isInCheck(newState, opponent)) {
                             return;
                         }
                     }
                 }
             }
         }
-        Color winner = detector.isInCheck(state, opponent) ? state.getTurn() : null;
+        Color winner = generator.isInCheck(state, opponent) ? state.getTurn() : null;
         state.setGameEndState(GameEndState.state(winner));
     }
 
