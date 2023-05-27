@@ -5,8 +5,10 @@ import org.springframework.stereotype.Component;
 
 import personal.javachess.data.Move;
 import personal.javachess.data.State;
+import personal.javachess.enums.GameEndState;
 import personal.javachess.utils.BoardPrinter;
 import personal.javachess.utils.BoardSetter;
+import personal.javachess.utils.GameEndDetector;
 import personal.javachess.utils.MoveParser;
 import personal.javachess.utils.MoveValidator;
 import personal.javachess.utils.StateUpdater;
@@ -22,6 +24,7 @@ public class Game {
     @Autowired private MoveParser parser;
     @Autowired private StateUpdater updater;
     @Autowired private MoveValidator validator;
+    @Autowired private GameEndDetector detector;
 
     private Scanner sc = new Scanner(System.in);
     
@@ -31,7 +34,8 @@ public class Game {
         setter.defaultStartingState(state);
 
         // keep playing till the game ends
-        while (state.getGameEndState() == null) {
+        GameEndState gameEndState = null;
+        while (gameEndState == null) {
 
             // display the board
             System.out.print("\033[H\033[2J");
@@ -61,15 +65,16 @@ public class Game {
 
             // update the state
             updater.updateState(state, move);
-            updater.end(state, move);
-            updater.nextTurn(state);
+
+            // check if the game is over
+            gameEndState = detector.getGameEndState(state);
         }
 
         // game over
         System.out.print("\033[H\033[2J");
         System.out.flush();
         System.out.println(printer.displayBoard(state));
-        System.out.println("Game Over. "+state.getGameEndState().getMessage());
+        System.out.println("Game Over. "+gameEndState.getMessage());
     }
 
 }

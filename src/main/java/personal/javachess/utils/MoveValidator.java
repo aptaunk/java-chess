@@ -14,6 +14,7 @@ public class MoveValidator {
     
     @Autowired private MovesGenerator generator;
     @Autowired private StateUpdater updater;
+    @Autowired private CheckFinder finder;
 
     public boolean isValidMove(State state, Move move) {
         Piece[][] board = state.getBoard();
@@ -33,11 +34,6 @@ public class MoveValidator {
         if (!movePiece.getColor().equals(move.getPlayer())) {
             return false;
         }
-
-        // check the to-coordinates are within the bounds
-        if (!isWithinBounds(state, move.getToRank(), move.getToFile())) {
-            return false;
-        }
         
         // check that the move is something that the piece can do
         List<Move> moves = generator.generateMoves(state, move.getFromRank(), move.getFromFile());
@@ -46,8 +42,8 @@ public class MoveValidator {
         }
 
         // make sure king is not in check as a result of this move
-        State newState = updater.newState(state, move);
-        return !generator.isInCheck(newState, state.getTurn());
+        State newState = newState(state, move);
+        return !finder.isInCheck(newState);
     }
 
     private boolean isWithinBounds(State state, int rank, int file) {
@@ -55,5 +51,12 @@ public class MoveValidator {
         int ranks = board.length;
         int files = board[0].length;
         return rank >= 0 && rank < ranks && file >= 0 && file < files;
+    }
+
+    private State newState(State state, Move move) {
+        State newState = new State(state);
+        updater.updateState(newState, move);
+        updater.nextTurn(newState);
+        return newState;
     }
 }

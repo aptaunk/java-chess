@@ -3,7 +3,6 @@ package personal.javachess.data;
 import org.springframework.stereotype.Component;
 
 import personal.javachess.enums.Color;
-import personal.javachess.enums.GameEndState;
 import personal.javachess.enums.Piece;
 
 @Component
@@ -11,7 +10,6 @@ public class State {
     
     private Color turn;
     private Piece[][] board;
-    private GameEndState gameEndState;
     private boolean[] kingMoved = new boolean[Color.values().length];
     private boolean[] kingRookMoved = new boolean[Color.values().length];
     private boolean[] queenRookMoved = new boolean[Color.values().length];
@@ -23,7 +21,6 @@ public class State {
 
     public State(State other) {
         this.turn = other.turn;
-        this.gameEndState = other.gameEndState;
         this.enpassantRank = other.enpassantRank;
         this.enpassantFile = other.enpassantFile;
         for (int i = 0; i < Color.values().length; i++) {
@@ -53,14 +50,6 @@ public class State {
 
     public Piece[][] getBoard() {
         return board;
-    }
-
-    public GameEndState getGameEndState() {
-        return gameEndState;
-    }
-
-    public void setGameEndState(GameEndState gameEndState) {
-        this.gameEndState = gameEndState;
     }
 
     public boolean[] getKingMoved() {

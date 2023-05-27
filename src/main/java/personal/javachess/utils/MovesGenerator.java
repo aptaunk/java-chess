@@ -93,8 +93,19 @@ public class MovesGenerator {
         for (int j = 0; j <= toFile - fromFile; j++) {
             board[rank][fromFile + j] = king;
         }
-        if (isInCheck(newState, state.getTurn())) {
-            return true;
+        Color opponent = king.equals(Piece.WHITE_KING) ? Color.BLACK : Color.WHITE;
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                Piece piece = board[i][j];
+                if (piece != null && piece.getColor().equals(opponent)) {
+                    List<Move> moves = generateMoves(state, i, j);
+                    for (Move move : moves) {
+                        if (move.getTakePiece() != null && move.getTakePiece().equals(king)) {
+                            return true;
+                        }
+                    }
+                }
+            }
         }
         return false;
     }
@@ -263,25 +274,6 @@ public class MovesGenerator {
         int ranks = board.length;
         int files = board[0].length;
         return rank >= 0 && rank < ranks && file >= 0 && file < files;
-    }
-
-    public boolean isInCheck(State state, Color player) {
-        Piece[][] board = state.getBoard();
-        Color opponent = player.equals(Color.WHITE) ? Color.BLACK : Color.WHITE;
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[0].length; j++) {
-                Piece piece = board[i][j];
-                if (piece != null && piece.getColor().equals(opponent)) {
-                    List<Move> moves = generateMoves(state, i, j);
-                    for (Move move : moves) {
-                        if (move.getTakePiece() != null && move.getTakePiece().getType().equals(PieceType.KING)) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
     }
 
 }
