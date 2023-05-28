@@ -117,7 +117,7 @@ public class MovesGenerator {
                 if (!isWithinBounds(state, rank + i, file + j)) {
                     continue;
                 }
-                if (i == 0 || j == 0 || i == j || i == -j) {
+                if (Math.abs(i) + Math.abs(j) != 3) {
                     continue;
                 }
                 Move move = parser.parse(state, rank, file, rank + i, file + j);
