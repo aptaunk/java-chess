@@ -2,9 +2,9 @@ package personal.javachess.utils;
 
 import org.springframework.stereotype.Component;
 
+import personal.javachess.data.Piece;
 import personal.javachess.data.State;
 import personal.javachess.enums.Color;
-import personal.javachess.enums.Piece;
 import personal.javachess.enums.PieceType;
 
 @Component
@@ -47,7 +47,7 @@ public class BoardPrinter {
 
     private String getSymbol(Color color, PieceType type) {
         switch (color) {
-            case WHITE: {
+            case BLACK: {
                 switch (type) {
                     case ROOK: return "♖";
                     case KNIGHT: return "♘";
@@ -57,7 +57,7 @@ public class BoardPrinter {
                     case PAWN: return "♙";
                 }
             }
-            case BLACK: {
+            case WHITE: {
                 switch (type) {
                     case ROOK: return "♜";
                     case KNIGHT: return "♞";

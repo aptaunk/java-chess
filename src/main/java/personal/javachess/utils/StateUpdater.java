@@ -3,9 +3,9 @@ package personal.javachess.utils;
 import org.springframework.stereotype.Component;
 
 import personal.javachess.data.Move;
+import personal.javachess.data.Piece;
 import personal.javachess.data.State;
 import personal.javachess.enums.Color;
-import personal.javachess.enums.Piece;
 import personal.javachess.enums.PieceType;
 
 @Component
@@ -43,19 +43,21 @@ public class StateUpdater {
         Piece movePiece = move.getMovePiece();
         board[move.getFromRank()][move.getFromFile()] = null;
         board[move.getToRank()][move.getToFile()] = movePiece;
+        boolean[] isCastlePossible;
         switch (movePiece.getType()) {
             case KING:
-                boolean[] kingMoved = state.getKingMoved();
-                kingMoved[movePiece.getColor().ordinal()] = true;
+                isCastlePossible = state.getKingCastlePossible();
+                isCastlePossible[movePiece.getColor().ordinal()] = false;
+                isCastlePossible = state.getQueenCastlePossible();
+                isCastlePossible[movePiece.getColor().ordinal()] = false;
                 break;
             case ROOK:
-                boolean[] rookMoved;
                 if (move.getFromFile() == 0) {
-                    rookMoved = state.getQueenRookMoved();
+                    isCastlePossible = state.getQueenCastlePossible();
                 } else {
-                    rookMoved = state.getKingRookMoved();
+                    isCastlePossible = state.getKingCastlePossible();
                 }
-                rookMoved[movePiece.getColor().ordinal()] = true;
+                isCastlePossible[movePiece.getColor().ordinal()] = true;
                 break;
             default:
                 break;

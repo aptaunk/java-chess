@@ -5,8 +5,8 @@ import java.util.Scanner;
 import org.springframework.stereotype.Component;
 
 import personal.javachess.data.Move;
+import personal.javachess.data.Piece;
 import personal.javachess.data.State;
-import personal.javachess.enums.Piece;
 import personal.javachess.enums.PieceType;
 
 @Component
@@ -78,33 +78,18 @@ public class MoveParser {
             }
     
             if (promotionStr != null) {
-                Piece rook = null, bishop = null, knight = null, queen = null;
-                switch(move.getPlayer()) {
-                    case WHITE:
-                        rook = Piece.WHITE_ROOK;
-                        bishop = Piece.WHITE_BISHOP;
-                        knight = Piece.WHITE_KNIGHT;
-                        queen = Piece.WHITE_QUEEN;
-                        break;
-                    case BLACK:
-                        rook = Piece.BLACK_ROOK;
-                        bishop = Piece.BLACK_BISHOP;
-                        knight = Piece.BLACK_KNIGHT;
-                        queen = Piece.BLACK_QUEEN;
-                        break;
-                }
                 switch(promotionStr) {
                     case "r": case "R": case "ROOK":
-                        move.setPromote(rook);
-                        break;
-                    case "b": case "B": case "BISHOP":
-                        move.setPromote(bishop);
+                        move.setPromote(new Piece(move.getPlayer(), PieceType.ROOK));
                         break;
                     case "n": case "N": case "k": case "K": case "KNIGHT":
-                        move.setPromote(knight);
+                        move.setPromote(new Piece(move.getPlayer(), PieceType.KNIGHT));
+                        break;
+                    case "b": case "B": case "BISHOP":
+                        move.setPromote(new Piece(move.getPlayer(), PieceType.BISHOP));
                         break;
                     case "q": case "Q": case "QUEEN":
-                        move.setPromote(queen);
+                        move.setPromote(new Piece(move.getPlayer(), PieceType.QUEEN));
                         break;
                 }
             }

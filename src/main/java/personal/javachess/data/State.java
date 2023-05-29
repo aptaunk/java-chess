@@ -3,16 +3,14 @@ package personal.javachess.data;
 import org.springframework.stereotype.Component;
 
 import personal.javachess.enums.Color;
-import personal.javachess.enums.Piece;
 
 @Component
 public class State {
     
     private Color turn;
     private Piece[][] board;
-    private boolean[] kingMoved = new boolean[Color.values().length];
-    private boolean[] kingRookMoved = new boolean[Color.values().length];
-    private boolean[] queenRookMoved = new boolean[Color.values().length];
+    private boolean[] kingCastlePossible = new boolean[Color.values().length];
+    private boolean[] queenCastlePossible = new boolean[Color.values().length];
     private int enpassantRank = -1;
     private int enpassantFile = -1;
 
@@ -24,9 +22,8 @@ public class State {
         this.enpassantRank = other.enpassantRank;
         this.enpassantFile = other.enpassantFile;
         for (int i = 0; i < Color.values().length; i++) {
-            this.kingMoved[i] = other.kingMoved[i];
-            this.kingRookMoved[i] = other.kingRookMoved[i];
-            this.queenRookMoved[i] = other.queenRookMoved[i];
+            this.kingCastlePossible[i] = other.kingCastlePossible[i];
+            this.queenCastlePossible[i] = other.queenCastlePossible[i];
         }
         this.board = new Piece[other.board.length][other.board[0].length];
         for (int i = 0; i < board.length; i++) {
@@ -52,28 +49,20 @@ public class State {
         return board;
     }
 
-    public boolean[] getKingMoved() {
-        return kingMoved;
+    public boolean[] getKingCastlePossible() {
+        return kingCastlePossible;
     }
 
-    public void setKingMoved(boolean[] kingMoved) {
-        this.kingMoved = kingMoved;
+    public void setKingCastlePossible(boolean[] kingCastlePossible) {
+        this.kingCastlePossible = kingCastlePossible;
     }
 
-    public boolean[] getKingRookMoved() {
-        return kingRookMoved;
+    public boolean[] getQueenCastlePossible() {
+        return queenCastlePossible;
     }
 
-    public void setKingRookMoved(boolean[] kingRookMoved) {
-        this.kingRookMoved = kingRookMoved;
-    }
-
-    public boolean[] getQueenRookMoved() {
-        return queenRookMoved;
-    }
-
-    public void setQueenRookMoved(boolean[] queenRookMoved) {
-        this.queenRookMoved = queenRookMoved;
+    public void setQueenCastlePossible(boolean[] queenCastlePossible) {
+        this.queenCastlePossible = queenCastlePossible;
     }
 
     public int getEnpassantRank() {

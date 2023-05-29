@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import personal.javachess.data.Move;
+import personal.javachess.data.Piece;
 import personal.javachess.data.State;
 import personal.javachess.enums.Color;
-import personal.javachess.enums.Piece;
 import personal.javachess.enums.PieceType;
 
 @Component
@@ -58,22 +58,22 @@ public class MovesGenerator {
         List<Move> moves = new ArrayList<>();
         Piece[][] board = state.getBoard();
         Piece movePiece = board[rank][file];
-        if (!state.getKingMoved()[movePiece.getColor().ordinal()]) {
-            // king side castle
-            if (!state.getKingRookMoved()[movePiece.getColor().ordinal()]) {
-                if (isEmpty(state, rank, file + 1, file + 2) && !isCheck(state, rank, file, file + 2, movePiece)) {
-                    Move move = parser.parse(state, rank, file, rank, file + 2);
-                    moves.add(move);
-                }
-            }
-            // queen side castle
-            if (!state.getQueenRookMoved()[movePiece.getColor().ordinal()]) {
-                if (isEmpty(state, rank, file - 3, file - 1) && !isCheck(state, rank, file - 2, file, movePiece)) {
-                    Move move = parser.parse(state, rank, file, rank, file - 2);
-                    moves.add(move);
-                }
+
+        // king side castle
+        if (state.getKingCastlePossible()[movePiece.getColor().ordinal()]) {
+            if (isEmpty(state, rank, file + 1, file + 2) && !isCheck(state, rank, file, file + 2, movePiece)) {
+                Move move = parser.parse(state, rank, file, rank, file + 2);
+                moves.add(move);
             }
         }
+        // queen side castle
+        if (state.getQueenCastlePossible()[movePiece.getColor().ordinal()]) {
+            if (isEmpty(state, rank, file - 3, file - 1) && !isCheck(state, rank, file - 2, file, movePiece)) {
+                Move move = parser.parse(state, rank, file, rank, file - 2);
+                moves.add(move);
+            }
+        }
+
         return moves;
     }
 
@@ -93,12 +93,12 @@ public class MovesGenerator {
         for (int j = 0; j <= toFile - fromFile; j++) {
             board[rank][fromFile + j] = king;
         }
-        Color opponent = king.equals(Piece.WHITE_KING) ? Color.BLACK : Color.WHITE;
+        Color opponent = king.getColor().equals(Color.WHITE) ? Color.BLACK : Color.WHITE;
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
                 Piece piece = board[i][j];
                 if (piece != null && piece.getColor().equals(opponent)) {
-                    List<Move> moves = generateMoves(state, i, j);
+                    List<Move> moves = generateMoves(newState, i, j);
                     for (Move move : moves) {
                         if (move.getTakePiece() != null && move.getTakePiece().equals(king)) {
                             return true;

@@ -1,7 +1,6 @@
 package personal.javachess.data;
 
 import personal.javachess.enums.Color;
-import personal.javachess.enums.Piece;
 
 public class Move {
     private Color player;

@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import personal.javachess.data.Move;
+import personal.javachess.data.Piece;
 import personal.javachess.data.State;
 import personal.javachess.enums.Color;
-import personal.javachess.enums.Piece;
 import personal.javachess.enums.PieceType;
 
 @Component
